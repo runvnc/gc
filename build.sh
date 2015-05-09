@@ -1,4 +1,7 @@
 #!/bin/bash
+BIN=$(npm bin)
 cd public
-6to5 app.jsx > app.js
-cat react.min.js app.js > main.js 
+$BIN/6to5 app.jsx > app.js
+$BIN/uglifyjs app.js > app.min.js
+cat react.min.js app.min.js > main.js
+cd ..
