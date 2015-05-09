@@ -1,7 +1,7 @@
 {
-  "name": "react-peerjs",
+  "name": "react-simplewebrtc",
   "version": "0.0.0",
-  "description": "ReactJS chat with PeerJS",
+  "description": "ReactJS SimpleWebRTC demo",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,7 +17,10 @@
   "license": "MIT",
   "dependencies": {
     "express": "~4.8.4",
-    "peer": "~0.2.6",
     "socket.io": "~1.0.6"
+  },
+  "devDependencies": {
+    "6to5": "",
+    "react-tools": ""
   }
 }
