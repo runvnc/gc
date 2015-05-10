@@ -1,42 +1,33 @@
-class TodoList extends React.Component {
-  render() {
-    function createItem(itemText, index) {
-      return <li key={index + itemText}>{itemText}</li>;
-    };
-    return <ul>{this.props.items.map(createItem)}</ul>;
+class WebRTCVideoRoom extends React.Component {
+  constructor() {
+    super();
+    var webrtc = new SimpleWebRTC({
+      localVideoEl: 'localVideo',
+      remoteVideosEl: 'remotesVideos',
+      autoRequestMedia: true
+    });
+    webrtc.on('readyToCall', function () {
+      webrtc.joinRoom('demo');
+    });
+   }
+
+   render() {
+     return 
+         <div>
+           <video height="300" id="localVideo"></video>
+           <div id=="remotesVideos"></div>
+         </div>;
   }
 }
-
-class TodoApp extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {items: props.items, text: props.text};
-  }
-  onChange(e) {
-    this.setState({text: e.target.value});
-  }
-  handleSubmit(e) {
-    e.preventDefault();
-    var nextItems = this.state.items.concat([this.state.text]);
-    var nextText = '';
-    this.setState({items: nextItems, text: nextText});
-  }
+///
+class WebRTCApp extends React.Component {
   render() {
     return (
         <div>
-        <h3>TODO</h3>
-        <TodoList items={this.state.items} />
-        <form onSubmit={this.handleSubmit.bind(this)}>
-        <input onChange={this.onChange.bind(this)} 
-               value={this.state.text} />
-        <button>{'Add #' + (this.state.items.length + 1)}</button>
-        </form>
-        </div>
-        );
+          <h3>WebRTC Demo for Gracescale</h3>
+          <WebRTCVideoRoom/>
+        </div>;
   }
 }
-TodoApp.propTypes = {items: React.PropTypes.array,
-                     text: React.PropTypes.string};
-TodoApp.defaultProps = {items: [], text: ''};
 
-React.render(<TodoApp />, document.getElementById('main'));
+React.render(<WebRTCApp />, document.getElementById('main'));
