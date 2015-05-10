@@ -15,25 +15,99 @@ var WebRTCVideoRoom = (function (_React$Component) {
     _get(Object.getPrototypeOf(WebRTCVideoRoom.prototype), "constructor", this).call(this);
     var webrtc = new SimpleWebRTC({
       localVideoEl: "localVideo",
-      remoteVideosEl: "remotesVideos",
+      remoteVideosEl: "",
       autoRequestMedia: true,
       debug: true
     });
     webrtc.on("readyToCall", function () {
       webrtc.joinRoom("demo");
     });
+    var self = this;
+    self.remotes = [];
+
+    webrtc.on("videoAdded", function (video, peer) {
+      self.remotes.push({ video: video, id: webrtc.getDomId(peer) });
+      var container = document.createElement("div");
+      video.oncontextmenu = function () {
+        return false;
+      };
+      self.forceUpdate();
+    });
+
+    // local p2p/ice failure
+    webrtc.on("iceFailed", function (peer) {
+      var connstate = document.querySelector("#container_" + webrtc.getDomId(peer) + " .connectionstate");
+      alert("local fail" + JSON.stringify(connstate));
+      if (connstate) {
+        connstate.innerText = "Connection failed.";
+        fileinput.disabled = "disabled";
+      }
+    });
+
+    // remote p2p/ice failure
+    webrtc.on("connectivityError", function (peer) {
+      var connstate = document.querySelector("#container_" + webrtc.getDomId(peer) + " .connectionstate");
+      alert("remote fail" + JSON.stringify(connstate));
+      if (connstate) {
+        connstate.innerText = "Connection failed.";
+        fileinput.disabled = "disabled";
+      }
+    });
   }
 
   _inherits(WebRTCVideoRoom, _React$Component);
 
   _prototypeProperties(WebRTCVideoRoom, null, {
+    appendVideos: {
+      value: function appendVideos() {
+        var self = this;
+        setTimeout(function () {
+          alert(JSON.stringify(self.remotes));
+          for (var _iterator = self.remotes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+            var remote = _step.value;
+            var div = document.getElementById("container_" + remote.id);
+            div.appendChild(remote.video);
+          }
+        }, 1000);
+      },
+      writable: true,
+      configurable: true
+    },
+    componentDidMount: {
+      value: function componentDidMount() {
+        this.appendVideos();
+      },
+      writable: true,
+      configurable: true
+    },
+    componentDidUpdate: {
+      value: function componentDidUpdate() {
+        this.appendVideos();
+      },
+      writable: true,
+      configurable: true
+    },
     render: {
       value: function render() {
+        var self = this;
         return React.createElement(
           "div",
           null,
           React.createElement("video", { height: "300", id: "localVideo" }),
-          React.createElement("div", { id: "remotesVideos" })
+          React.createElement(
+            "div",
+            { id: "remotesVideos" },
+            this.remotes.map(function (remote) {
+              return React.createElement(
+                "div",
+                { "class": "videoContainer",
+                  id: "container_{remote.id}" },
+                "hi ",
+                remote.id,
+                self.appendVideos()
+              );
+            })
+          )
         );
       },
       writable: true,
