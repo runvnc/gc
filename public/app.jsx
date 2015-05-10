@@ -4,29 +4,32 @@ class WebRTCVideoRoom extends React.Component {
     var webrtc = new SimpleWebRTC({
       localVideoEl: 'localVideo',
       remoteVideosEl: 'remotesVideos',
-      autoRequestMedia: true
+      autoRequestMedia: true,
+      debug: true
     });
     webrtc.on('readyToCall', function () {
       webrtc.joinRoom('demo');
     });
-   }
+  }
 
-   render() {
-     return 
-         <div>
-           <video height="300" id="localVideo"></video>
-           <div id=="remotesVideos"></div>
-         </div>;
+  render() {
+    return (
+      <div>
+      <video height="300" id="localVideo"></video>
+      <div id="remotesVideos"></div>
+      </div>
+    );
   }
 }
-///
+
 class WebRTCApp extends React.Component {
   render() {
     return (
         <div>
-          <h3>WebRTC Demo for Gracescale</h3>
-          <WebRTCVideoRoom/>
-        </div>;
+        <h3>WebRTC Demo for Gracescale</h3>
+        <WebRTCVideoRoom/>
+        </div>
+    );
   }
 }
 
