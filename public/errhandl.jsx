@@ -63,8 +63,14 @@ class WebRTCVideoRoom extends React.Component {
       for (let remote of remotes) {
         dbg(remote.id);
         let div = document.getElementById('container_'+remote.id);
+
+        remote.video.style.height = '300px';
         div.appendChild(remote.video);
         remote.video.style.display = 'block';
+        remote.video.style.height = '300px';
+        remote.video.style.border = '2px solid red';
+        div.style.height = '300px';
+        div.style.border = '1px solid blue';
       } 
     });
   }
@@ -80,16 +86,26 @@ class WebRTCVideoRoom extends React.Component {
   render() {
     dbg('render');
     var self = this;
+    var style = {
+      position: 'relative',
+      marginTop: '200px',
+      marginLeft: '300px',
+      border: '20px green solid',
+      height: '300px',
+      left:'300px'
+    };
     return (
         <div>
         <video height="300" id="localVideo"></video>
         <h3>Remotes:</h3>
         <div id="remotesVideos">
         {
-          self.remotes.map(function(remote) {
+          remotes.map(function(remote) {
             return (
               <div style={style}
               id={"container_"+remote.id}>
+              ---blah
+              blah
               </div>
               );
           })
