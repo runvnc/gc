@@ -19,8 +19,6 @@ window.onerror = function (e) {
 
 dbg("start");
 
-var remotes = [];
-
 var WebRTCVideoRoom = (function (_React$Component) {
   function WebRTCVideoRoom() {
     _classCallCheck(this, WebRTCVideoRoom);
@@ -40,31 +38,11 @@ var WebRTCVideoRoom = (function (_React$Component) {
 
     webrtc.on("videoAdded", function (video, peer) {
       dbg("added");
-      remotes.push({ video: video, id: webrtc.getDomId(peer) });
+      self.remotes.push({ video: video, id: webrtc.getDomId(peer) });
       video.oncontextmenu = function () {
         return false;
       };
       self.forceUpdate();
-    });
-
-    // local p2p/ice failure
-    webrtc.on("iceFailed", function (peer) {
-      var connstate = document.querySelector("#container_" + webrtc.getDomId(peer) + " .connectionstate");
-      alert("local fail" + JSON.stringify(connstate));
-      if (connstate) {
-        connstate.innerText = "Connection failed.";
-        fileinput.disabled = "disabled";
-      }
-    });
-
-    // remote p2p/ice failure
-    webrtc.on("connectivityError", function (peer) {
-      var connstate = document.querySelector("#container_" + webrtc.getDomId(peer) + " .connectionstate");
-      alert("remote fail" + JSON.stringify(connstate));
-      if (connstate) {
-        connstate.innerText = "Connection failed.";
-        fileinput.disabled = "disabled";
-      }
     });
   }
 
@@ -73,23 +51,14 @@ var WebRTCVideoRoom = (function (_React$Component) {
   _prototypeProperties(WebRTCVideoRoom, null, {
     appendVideos: {
       value: function appendVideos() {
-        dbg("appendVideos");
-        dbg(remotes.length.toString());
         var self = this;
-        dbg(remotesVideos.innerHTML);
         requestAnimationFrame(function () {
-          for (var _iterator = remotes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+          for (var _iterator = self.remotes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
             var remote = _step.value;
-            dbg(remote.id);
             var div = document.getElementById("container_" + remote.id);
-
-            remote.video.style.height = "300px";
             div.appendChild(remote.video);
             remote.video.style.display = "block";
-            remote.video.style.height = "300px";
-            remote.video.style.border = "2px solid red";
-            div.style.height = "300px";
-            div.style.border = "1px solid blue";
+            remote.video.style.position = "relative";
           }
         });
       },
@@ -114,14 +83,6 @@ var WebRTCVideoRoom = (function (_React$Component) {
       value: function render() {
         dbg("render");
         var self = this;
-        var style = {
-          position: "relative",
-          marginTop: "200px",
-          marginLeft: "300px",
-          border: "20px green solid",
-          height: "300px",
-          left: "300px"
-        };
         return React.createElement(
           "div",
           null,
@@ -134,13 +95,8 @@ var WebRTCVideoRoom = (function (_React$Component) {
           React.createElement(
             "div",
             { id: "remotesVideos" },
-            remotes.map(function (remote) {
-              return React.createElement(
-                "div",
-                { style: style,
-                  id: "container_" + remote.id },
-                "---blah blah"
-              );
+            self.remotes.map(function (remote) {
+              return React.createElement("div", { id: "container_" + remote.id });
             })
           )
         );

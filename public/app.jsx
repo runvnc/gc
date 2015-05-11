@@ -9,8 +9,6 @@ window.onerror = (e) => {
 
 dbg('start')
 
-var remotes = [];
-
 class WebRTCVideoRoom extends React.Component {
   constructor() {
     super();
@@ -28,43 +26,20 @@ class WebRTCVideoRoom extends React.Component {
 
     webrtc.on('videoAdded', function (video, peer) {
       dbg('added');
-      remotes.push({video:video, id:webrtc.getDomId(peer)});  
+      self.remotes.push({video:video, id:webrtc.getDomId(peer)});  
       video.oncontextmenu = function () { return false; };
       self.forceUpdate();
-    });
-
-    // local p2p/ice failure
-    webrtc.on('iceFailed', function (peer) {
-      var connstate = document.querySelector('#container_' + webrtc.getDomId(peer) + ' .connectionstate');
-      alert('local fail'+JSON.stringify(connstate));
-      if (connstate) {
-        connstate.innerText = 'Connection failed.';
-        fileinput.disabled = 'disabled';
-      }
-    });
-
-    // remote p2p/ice failure
-    webrtc.on('connectivityError', function (peer) {
-      var connstate = document.querySelector('#container_' + webrtc.getDomId(peer) + ' .connectionstate');
-      alert('remote fail'+JSON.stringify(connstate));
-      if (connstate) {
-        connstate.innerText = 'Connection failed.';
-        fileinput.disabled = 'disabled';
-      }
     });
   }
 
   appendVideos() {
-    dbg('appendVideos');
-    dbg(remotes.length.toString());
     var self = this;
-    dbg(remotesVideos.innerHTML);
     requestAnimationFrame(function() {
-      for (let remote of remotes) {
-        dbg(remote.id);
+      for (let remote of self.remotes) {
         let div = document.getElementById('container_'+remote.id);
         div.appendChild(remote.video);
         remote.video.style.display = 'block';
+        remote.video.style.position = 'relative';
       } 
     });
   }
@@ -88,8 +63,7 @@ class WebRTCVideoRoom extends React.Component {
         {
           self.remotes.map(function(remote) {
             return (
-              <div style={style}
-              id={"container_"+remote.id}>
+              <div id={"container_"+remote.id}>
               </div>
               );
           })
